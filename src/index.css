@@ -29,7 +29,7 @@
 }
 
 .background-container {
-  background-image: url('./utils/agri.jpeg');
+  background-image: url('../src/utils/agri.jpeg');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
