@@ -1,0 +1,17 @@
+.footer {
+  background-color: rgba(0, 86, 67, 0.9);;
+  padding: 10px;
+  text-align: center;
+  color: #ffc82e;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100; /* Ensure the footer is above other content */
+  transition: background-color 0.3s ease; /* Add transition for background-color */
+}
+
+.footer-content {
+  font-size: 14px;
+  text-align: left; /* Align content to the left */
+  margin: 0 auto; /* Center content horizontally */
+}
