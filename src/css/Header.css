@@ -1,0 +1,40 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 86, 67, 0.9); /* Slightly transparent background color */
+    color: #ffc82e;
+    padding: 10px;
+    z-index: 100;
+    transition: background-color 0.3s; /* Add smooth transition for background color */
+  }
+  
+  /* Apply a more opaque background when not scrolled */
+  .header:not(.scrolled) {
+    background-color: #005643; /* Solid background color */
+  }
+  
+  
+  .logo img {
+    display: block;
+    max-width: 100%;
+  }
+  
+  .navigation ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .navigation li {
+    margin-right: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  /* Style navigation links (you can add more styles as needed) */
+  .navigation li:hover {
+    text-decoration: underline;
+  }
