@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import '../index.css';
 import ResultForm from './ResultForm';
-import biomassImage from '../utils/transportation.jpeg';
+import biomassImage from '../utils/t4.jpeg';
 
 
 function BiomassCalculator() {
@@ -63,9 +63,11 @@ function BiomassCalculator() {
     // Handle input field changes
     const handleInputChange = (event, key) => {
         const { value } = event.target;
+        // Use parseFloat to convert the value to a float, or keep it as a string if parsing fails
+        const numericValue = parseFloat(value);
         setFormData({
             ...formData,
-            [key]: { value: parseFloat(value) || value },
+            [key]: { value: isNaN(numericValue) ? value : numericValue },
         });
     };
 
@@ -110,6 +112,7 @@ function BiomassCalculator() {
             if (response.ok) {
                 const data = await response.json();
                 setResultData(data);
+                setIsResultDisplayed(true)
             } else {
                 console.error('API request failed:', response.statusText);
             }
@@ -117,7 +120,6 @@ function BiomassCalculator() {
             console.error('Error while making the API request:', error);
         } finally {
             setIsLoading(false);
-            setIsResultDisplayed(true);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
@@ -147,7 +149,7 @@ function BiomassCalculator() {
                                         src={biomassImage}
                                         alt="Biomass"
                                         className="biomass-image"
-                                        style={{ width: '100%', height: '200px' }}
+                                        style={{ width: '100%', height: '300px' }}
                                     />
                                     <hr />
                                     <form onSubmit={handleSubmit}> {/* Add the form tag here */}
