@@ -2,8 +2,7 @@ import React from 'react';
 import { Typography, TextField, Container, Grid, Button } from '@mui/material';
 
 function ResultForm({ apiData, onBackClick }) {
-    const { error, response } = apiData || {};
-    const result = !error && response?.[0];
+    const result = apiData?.[0];
 
     return (
         <Container maxWidth="md">
@@ -39,7 +38,7 @@ function ResultForm({ apiData, onBackClick }) {
                             fullWidth
                             label={item.label}
                             value={result ? result[item.key] : ''}
-                            disabled={true} // Make the input field unclickable
+                            disabled={true}
                         />
                     </Grid>
                 ))}
@@ -50,12 +49,12 @@ function ResultForm({ apiData, onBackClick }) {
                 onClick={onBackClick}
                 sx={{
                     marginTop: '20px',
-                    backgroundColor: '#005643', // Background color
-                    color: '#ffc82e', // Text color
-                    height: '48px', // Button height
-                    width: '100%', // Make the button full width
+                    backgroundColor: '#005643',
+                    color: '#ffc82e',
+                    height: '48px',
+                    width: '100%',
                     '&:hover': {
-                        backgroundColor: '#003c31', // Hover background color
+                        backgroundColor: '#003c31',
                     },
                 }}
             >

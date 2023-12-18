@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Button, Box, IconButton } from '@mui/material';
 import logo from '../utils/logo.png';
 import '../css/Header.css';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Scroll to the top when the page loads
   useEffect(() => {
@@ -29,7 +32,6 @@ const Header = () => {
   }, []);
 
   const buttonStyles = {
-    color: '#ffc82e', // Yellow color
     fontWeight: 'bold', // Bold text
   };
 
@@ -38,30 +40,43 @@ const Header = () => {
     transition: 'background-color 0.3s ease',
   };
 
+  const toggleMobileMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <AppBar className="header" position="fixed" style={headerStyles}>
       <Toolbar>
         <div className="logo">
           <img
-            src={logo} // Use the logo URL here
+            src={logo}
             alt="Logo"
-            width="250" // Adjust the width as needed
+            width="250"
             height="40"
           />
         </div>
         <Box sx={{ flexGrow: 1 }} />
-        <Typography variant="h6" component="div" className="navigation">
+
+        {/* Hamburger menu button for mobile devices */}
+        <IconButton
+          onClick={toggleMobileMenu}
+          sx={{ display: { sm: 'block', md: 'none' } }}
+        >
+          {menuOpen ? <CloseIcon /> : <MenuIcon />}
+        </IconButton>
+
+        {/* Desktop buttons for larger screens */}
+        <div className="desktop-buttons">
           <Button color="inherit" style={buttonStyles}>
             Home
           </Button>
-          <Button color="inherit" style={buttonStyles}>
+          <Button href="https://www.ndsu.edu/agriculture/extension/about-ndsu-extension" color="inherit" style={buttonStyles}>
             About
           </Button>
-          <Button color="inherit" style={buttonStyles}>
+          <Button href="https://www.ndsu.edu/agriculture/extension/contact-us-0" color="inherit" style={buttonStyles}>
             Contact
           </Button>
-          {/* Add more buttons as needed */}
-        </Typography>
+        </div>
       </Toolbar>
     </AppBar>
   );

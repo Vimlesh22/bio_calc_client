@@ -1,14 +1,22 @@
 import React from 'react';
-import Header from './components/Header'; // Import the Header component
-import Footer from './components/Footer'; // Import the Footer component
+
+import { Routes, Route } from 'react-router-dom';
 import BiomassCalculator from './components/BiomassCalculator';
+import SelectedCategory from './components/SelectedCategory';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Dashboard from './components/Dashboard';
 
 const App = () => {
     return (
-        <div className="App">
+        <div className="app-container">
             <Header />
-            <div className="forms-container">
-                <BiomassCalculator />
+            <div className="content-container">
+                <Routes>
+                    <Route path='/' element={<Dashboard />} />
+                    <Route path='/biomass-calculator' element={<BiomassCalculator />} />
+                    <Route path='/category/:id' element={<SelectedCategory />} />
+                </Routes>
             </div>
             <Footer />
         </div>

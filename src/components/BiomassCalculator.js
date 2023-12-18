@@ -5,13 +5,10 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import '../index.css';
 import ResultForm from './ResultForm';
 import biomassImage from '../utils/t4.jpeg';
 
-
 function BiomassCalculator() {
-    // Define a mapping of parameter names to input types
     const inputTypeMapping = {
         "Yield (Bales per Acre)": "number",
         "Truck Capacity (Bales)": "number",
@@ -33,7 +30,6 @@ function BiomassCalculator() {
         "Annual Hours of Use (hours)": "number",
     };
 
-    // Define initial form data and states
     const initialFormData = {
         "Yield (Bales per Acre)": { value: '', min: 0, max: 10000 },
         "Truck Capacity (Bales)": { value: '', min: 0, max: 10000 },
@@ -60,10 +56,8 @@ function BiomassCalculator() {
     const [isLoading, setIsLoading] = useState(false);
     const [isResultDisplayed, setIsResultDisplayed] = useState(false);
 
-    // Handle input field changes
     const handleInputChange = (event, key) => {
         const { value } = event.target;
-        // Use parseFloat to convert the value to a float, or keep it as a string if parsing fails
         const numericValue = parseFloat(value);
         setFormData({
             ...formData,
@@ -71,58 +65,107 @@ function BiomassCalculator() {
         });
     };
 
-    // Function to handle going back to the form
     const handleBackToForm = () => {
         setIsResultDisplayed(false);
+    };
+
+    const calculateBiomassMetrics = () => {
+        try {
+            const formDataValues = Object.entries(formData).reduce((acc, [key, { value }]) => {
+                acc[key] = value;
+                return acc;
+            }, {});
+
+            const {
+                "Yield (Bales per Acre)": yieldValue,
+                "Truck Capacity (Bales)": truck_capacity,
+                "Trip Length (miles)": trip_length,
+                "Fuel Economy (mpg)": fuel_economy,
+                "Interest Rate (%)": interest_rate,
+                "Labor ($/hr)": labor,
+                "Fuel ($/g)": fuel,
+                "Repairs ($/hr)": repairs,
+                "Load Time (hours)": load_time,
+                "Unload Time (hours)": unload_time,
+                "Idling Time (hours)": idling_time,
+                "Idling Fuel Use (gal/hr)": idling_fuel_use,
+                "Loaded Speed (mph)": loaded_speed,
+                "Unloaded Speed (mph)": unloaded_speed,
+                "Purchase ($)": purchase,
+                "Sales ($)": sales,
+                "Years of Use (Years)": years_of_use,
+                "Annual Hours of Use (hours)": annual_hours_of_use,
+            } = formDataValues;
+
+            // Calculate trips per acre using the formula (yield / truck_capacity)
+            const trips_per_acre = yieldValue / truck_capacity;
+
+            // Calculate trip duration
+            const trip_duration =
+                load_time +
+                unload_time +
+                idling_time +
+                (trip_length / loaded_speed) +
+                (trip_length / unloaded_speed);
+
+            // Calculate interest per hour
+            const interest_per_hour = (purchase * (interest_rate / 150 / 100));
+
+            // Calculate depreciation
+            const depreciation = purchase - sales;
+            const per_year = depreciation / years_of_use;
+            const per_hour = per_year / annual_hours_of_use;
+
+            // Calculate cost per acre
+            const cost_per_acre =
+                trips_per_acre *
+                ((labor + repairs + interest_per_hour + per_hour) * trip_duration +
+                    (trip_length / fuel_economy) * 2 * fuel +
+                    idling_time * idling_fuel_use * fuel);
+
+            // Calculate cost per ton
+            const cost_per_ton = cost_per_acre / yieldValue;
+
+            // Create an array of objects to hold the calculated values
+            const calculatedValues = [
+                {
+                    trips_per_acre,
+                    trip_duration,
+                    interest_per_hour,
+                    depreciation,
+                    per_year,
+                    per_hour,
+                    cost_per_acre,
+                    cost_per_ton,
+                },
+            ];
+            // Return the array of calculated values
+            return calculatedValues;
+        } catch (error) {
+            console.error("Error calculating biomass metrics:", error);
+            throw error;
+        }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
-        try {
-            const inputParams = {
-                // Prepare input parameters for the API request
-                yield: formData["Yield (Bales per Acre)"].value,
-                truck_capacity: formData["Truck Capacity (Bales)"].value,
-                trip_length: formData["Trip Length (miles)"].value,
-                fuel_economy: formData["Fuel Economy (mpg)"].value,
-                interest_rate: formData["Interest Rate (%)"].value,
-                labor: formData["Labor ($/hr)"].value,
-                fuel: formData["Fuel ($/g)"].value,
-                repairs: formData["Repairs ($/hr)"].value,
-                load_time: formData["Load Time (hours)"].value,
-                unload_time: formData["Unload Time (hours)"].value,
-                idling_time: formData["Idling Time (hours)"].value,
-                idling_fuel_use: formData["Idling Fuel Use (gal/hr)"].value,
-                loaded_speed: formData["Loaded Speed (mph)"].value,
-                unloaded_speed: formData["Unloaded Speed (mph)"].value,
-                purchase: formData["Purchase ($)"].value,
-                sales: formData["Sales ($)"].value,
-                years_of_use: formData["Years of Use (Years)"].value,
-                annual_hours_of_use: formData["Annual Hours of Use (hours)"].value,
-            };
-            const response = await fetch('http://localhost:9001/api/calculate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(inputParams),
-            });
 
-            if (response.ok) {
-                const data = await response.json();
-                setResultData(data);
-                setIsResultDisplayed(true)
-            } else {
-                console.error('API request failed:', response.statusText);
-            }
+        try {
+            // Calculate metrics using the updated function
+            const calculatedMetrics = calculateBiomassMetrics();
+
+            // Set the calculated metrics in state
+            setResultData(calculatedMetrics);
+            setIsResultDisplayed(true);
         } catch (error) {
-            console.error('Error while making the API request:', error);
+            console.error('Error while calculating metrics:', error);
         } finally {
             setIsLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
+
     return (
         <div className="background-container">
             <div className="forms-container">
@@ -152,14 +195,14 @@ function BiomassCalculator() {
                                         style={{ width: '100%', height: '300px' }}
                                     />
                                     <hr />
-                                    <form onSubmit={handleSubmit}> {/* Add the form tag here */}
+                                    <form onSubmit={handleSubmit}>
                                         <Grid container spacing={2}>
                                             {Object.keys(formData).map((key) => (
                                                 <Grid item xs={12} sm={4} key={key}>
                                                     <TextField
                                                         label={key}
                                                         name={key}
-                                                        type={inputTypeMapping[key] || "text"} // Use the input type from mapping, default to "text"
+                                                        type={inputTypeMapping[key] || "text"}
                                                         value={formData[key].value}
                                                         onChange={(e) => handleInputChange(e, key)}
                                                         fullWidth
@@ -178,8 +221,16 @@ function BiomassCalculator() {
                                             >
                                                 {isLoading ? 'Loading...' : 'Submit'}
                                             </Button>
+                                            <Button
+                                                variant="contained"
+                                                style={{ backgroundColor: '#005643', color: '#ffc82e', height: '48px', marginTop: '10px' }}
+                                                fullWidth
+                                                href='/category/1'
+                                            >
+                                                Back
+                                            </Button>
                                         </div>
-                                    </form> {/* Close the form tag here */}
+                                    </form>
                                 </div>
                             )}
                         </CardContent>
